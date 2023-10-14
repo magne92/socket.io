@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realtime Chat</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <ul id="messages"></ul>
+    <form id="chatForm">
+        <input id="input" autocomplete="off" />
+        <button type="submit">Send</button>
+    </form>
+    <script>
+        const socket = io();
+
+        document.getElementById('chatForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const input = document.getElementById('input');
+            socket.emit('chat message', input.value);
+            input.value = '';
+        });
+
+        socket.on('chat message', function(msg) {
+            const li = document.createElement('li');
+            li.textContent = msg;
+            document.getElementById('messages').appendChild(li);
+        });
+    </script>
+</body>
+</html>

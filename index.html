@@ -5,27 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Realtime Chat</title>
     <script src="/socket.io/socket.io.js"></script>
+    <style>
+        #board {
+            width: 500px;
+            height: 500px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        #board div {
+            width: 33%;
+            height: 33%;
+            border: 1px solid black;
+            font-size: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
-    <ul id="messages"></ul>
+    <div id="board">  <!-- 11 er rad 1 og kol 1  22 rad 2 kol 2 osv -->
+        <div id="11"> </div> <div id="12"> </div> <div id="13"> </div>
+        <div id="21"> </div> <div id="22"> </div> <div id="23"> </div>
+        <div id="31"> </div> <div id="32"> </div> <div id="33"> </div>
+    </div>
     <form id="chatForm">
-        <input id="input" autocomplete="off" />
+        Row <input id="row" autocomplete="off" />
+        Col <input id="col" autocomplete="off" />
         <button type="submit">Send</button>
     </form>
     <script>
         const socket = io();
 
-        document.getElementById('chatForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const input = document.getElementById('input');
-            socket.emit('chat message', input.value);
-            input.value = '';
-        });
+        //document.getElementById('chatForm').addEventListener('submit', 
+        
+        function addmark() {
+            //event.preventDefault();
+            console.log(this)
+            const input_row = document.getElementById('row');
+            const input_col = document.getElementById('col');
 
-        socket.on('chat message', function(msg) {
-            const li = document.createElement('li');
-            li.textContent = msg;
-            document.getElementById('messages').appendChild(li);
+            console.log(this.innerHTML)
+            //if (input_row.value < 4 && input_col.value < 4){
+            if (this.innerHTML == " "){
+                
+                console.log("sent mark")
+                // socket.emit('add_mark', input_row.value + input_col.value);
+                socket.emit('add_mark', this.id);
+            }
+            input_row.value = '';
+            input_col.value = '';
+        };
+
+        socket.on('update_board', function(msg) {
+            const board = document.getElementById('board')
+    
+            board.innerHTML = ''
+            var id_nr = 0
+            msg.forEach(row => {
+                var i = 0
+                console.log("row:", row)
+                row.forEach(box => {
+                    const div = document.createElement('div')
+                    div.innerHTML = row[i]
+                    div.id = id_nr
+                    div.addEventListener("click", addmark)
+                    board.appendChild(div)
+                    i++
+                    id_nr++                
+                });
+            });
         });
     </script>
 </body>

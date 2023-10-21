@@ -19,7 +19,7 @@ var board = [
 io.on('connection', (socket) => {
     console.log('A user connected');
     io.emit('update_board', board);
-
+    console.log("test of restart")
 
     socket.on('add_mark', (msg) => {
 

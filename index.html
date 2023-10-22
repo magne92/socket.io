@@ -31,11 +31,13 @@
         <div id="21"> </div> <div id="22"> </div> <div id="23"> </div>
         <div id="31"> </div> <div id="32"> </div> <div id="33"> </div>
     </div>
-    <form id="chatForm">
+   <h1 id="turn"></h1>
+   <h1 id="player"></h1>
+<!--     <form id="chatForm">
         Row <input id="row" autocomplete="off" />
         Col <input id="col" autocomplete="off" />
         <button type="submit">Send</button>
-    </form>
+    </form> -->
     <script>
         const socket = io();
 
@@ -50,19 +52,23 @@
             console.log(this.innerHTML)
             //if (input_row.value < 4 && input_col.value < 4){
             if (this.innerHTML == " "){
-                
                 console.log("sent mark")
                 // socket.emit('add_mark', input_row.value + input_col.value);
                 socket.emit('add_mark', this.id);
             }
-            input_row.value = '';
-            input_col.value = '';
         };
 
-        socket.on('update_board', function(msg) {
+        socket.on('player_select', function(player) {
+            document.getElementById('player').innerHTML = "You are " + player
+            console.log("set player")
+        })
+
+        socket.on('update_board', function(msg, turn) {
             const board = document.getElementById('board')
-    
+            const turn_tekst = document.getElementById('turn')
+            turn_tekst.innerHTML = "Player turn: " + turn
             board.innerHTML = ''
+            console.log("msg: ",msg, "turn:",turn)
             var id_nr = 0
             msg.forEach(row => {
                 var i = 0
